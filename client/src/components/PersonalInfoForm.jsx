@@ -34,6 +34,7 @@ const PersonalInfoForm = ({data, onChange, removeBackground, setRemoveBackground
                 <input type='file' accept="image/jpeg, image/png" className = "hidden" onChange={(e)=> handleChange("image", e.target.files[0])} />
 
             </label>
+            {/* Remove Background toggle temporarily disabled
             {typeof data.image === 'object' && (
                 <div className='flex flex-col gap-1 pl-4 text-sm'>
                     <p>Remove Background</p>
@@ -48,6 +49,7 @@ const PersonalInfoForm = ({data, onChange, removeBackground, setRemoveBackground
                     </label>
                 </div>
             )}
+            */}
         </div>
 
 

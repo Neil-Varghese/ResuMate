@@ -11,10 +11,15 @@ import ExperienceForm from '../components/ExperienceForm'
 import EducationForm from '../components/EducationForm'
 import ProjectForm from '../components/ProjectForm'
 import SkillsForm from '../components/SkillsForm'
+import { useSelector } from 'react-redux'
+import api from '../configs/api.js'
+import toast from 'react-hot-toast'
 
 const ResumeBuilder = () => {
 
   const {resumeId} = useParams()
+  const {token} = useSelector(state => state.auth)
+
 
   const [resumeData, setResumeData] = useState({
     _id: '',
@@ -31,15 +36,21 @@ const ResumeBuilder = () => {
   })
 
   const loadExistingResume = async() => {
-    const resume = dummyResumeData.find(resume => resume._id === resumeId)
-    if(resume){
-      setResumeData(resume)
-      document.title = resume.title
+    try{
+      const {data} = await api.get(`/api/resumes/get/${resumeId}`, {headers: {Authorization: token}});
+      if(data.resume){
+        setResumeData(data.resume);
+        document.title = data.resume.title;
+      }
+    }
+    catch(error){
+      console.log(error.message);
     }
   }
 
   const [activeSectionIndex, setActiveSectionIndex] = useState(0)
   const [removeBackground, setRemoveBackground] = useState(false)
+  const [saveLoading, setSaveLoading] = useState(false)
 
   const sections = [
     { id: "personal", name: "Personal Info", icon: User},
@@ -57,8 +68,31 @@ const ResumeBuilder = () => {
     loadExistingResume()
   },[resumeId])
 
-  const changeResumeVisibility = async(params) => {
-    setResumeData({...resumeData, public: !resumeData.public})
+  const changeResumeVisibility = async() => {
+    const newPublic = !resumeData.public;
+    // optimistic update
+    setResumeData(prev => ({...prev, public: newPublic}));
+    try{
+      // ensure resume exists
+      let createResp = null;
+      if(!resumeData._id){
+        createResp = await api.post('/api/resumes/create', { title: resumeData.title }, { headers: { Authorization: token } });
+        if(createResp && createResp.data && createResp.data.resume){
+          setResumeData(prev => ({...prev, _id: createResp.data.resume._id}));
+        }
+      }
+      // send minimal update to server
+      const payload = { resumeId: (resumeData._id || (createResp && createResp.data && createResp.data.resume && createResp.data.resume._id)), resumeData: { public: newPublic } };
+      const { data } = await api.put('/api/resumes/update', payload, { headers: { Authorization: token } });
+      if(data && data.resume){
+        setResumeData(data.resume);
+        toast.success('Visibility updated');
+      }
+    }catch(error){
+      // revert on error
+      setResumeData(prev => ({...prev, public: !newPublic}));
+      toast.error(error?.response?.data?.message || error.message);
+    }
   }
 
   const handleShare = () => {
@@ -148,8 +182,45 @@ const ResumeBuilder = () => {
 
               <button className='bg-gradient-to-br from-green-100 to-green-200
                 ring-green-300 text-green-600 ring hover:ring-green-400
-                transition-all rounded-md px-6 py-2 mt-6 text-sm'>
-                Save Changes
+                transition-all rounded-md px-6 py-2 mt-6 text-sm'
+                onClick={async() => {
+                  // save changes handler
+                  if(saveLoading) return;
+                  setSaveLoading(true);
+                  try{
+                    // if no _id, create the resume first
+                    if(!resumeData._id){
+                      const createResp = await api.post('/api/resumes/create', { title: resumeData.title }, { headers: { Authorization: token } });
+                      if(createResp && createResp.data && createResp.data.resume){
+                        setResumeData(prev => ({...prev, _id: createResp.data.resume._id}));
+                      }
+                    }
+
+                    // prepare FormData so multer on the server can handle an optional image
+                    const form = new FormData();
+                    form.append('resumeId', resumeData._id);
+                    form.append('resumeData', JSON.stringify(resumeData));
+                    form.append('removeBackground', removeBackground);
+                    // if personal image is a File object, attach it as `image` so multer picks it up
+                    const personalImage = resumeData.personal_info && resumeData.personal_info.image;
+                    if (personalImage && typeof personalImage !== 'string') {
+                      form.append('image', personalImage);
+                    }
+
+                    const { data } = await api.put('/api/resumes/update', form, { headers: { Authorization: token } });
+                    if(data && data.resume){
+                      setResumeData(data.resume);
+                      toast.success('Saved successfully');
+                    } else {
+                      toast.success(data?.message || 'Saved');
+                    }
+                  } catch(error){
+                    toast.error(error?.response?.data?.message || error.message)
+                  }
+                  setSaveLoading(false);
+                }}
+              >
+                {saveLoading ? 'Saving...' : 'Save Changes'}
               </button>
               
             </div>

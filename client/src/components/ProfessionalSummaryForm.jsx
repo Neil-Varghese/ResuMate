@@ -1,7 +1,31 @@
 import { Sparkles } from 'lucide-react'
-import React from 'react'
+import React, { useState } from 'react'
+import { useSelector } from 'react-redux'
+import api from '../configs/api.js'
+import toast from 'react-hot-toast'
 
 const ProfessionalSummaryForm = ({data, onChange, setResumeData}) => {
+  const { token } = useSelector(state => state.auth)
+  const [loading, setLoading] = useState(false)
+
+  const handleEnhance = async () => {
+    if (loading) return;
+    if (!data || data.trim().length === 0) {
+      toast.error('Please enter summary text to enhance')
+      return
+    }
+    setLoading(true)
+    try {
+      const { data: res } = await api.post('/api/ai/enhance-pro-sum', { userContent: data }, { headers: { Authorization: token } })
+      if (res && res.enhancedContent) {
+        onChange(res.enhancedContent)
+        toast.success('Enhanced summary applied')
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || err.message)
+    }
+    setLoading(false)
+  }
   return (
     <div className='space-y-4'>
         <div className='flex items-center justify-between'>
@@ -9,9 +33,9 @@ const ProfessionalSummaryForm = ({data, onChange, setResumeData}) => {
                 <h3 className='flex items-center gap-2 text-lg font-semibold text-gray-900'> Professional Summary </h3>
                 <p className='text-sm text-gray-500'>Add summary for your resume here</p>
             </div>
-            <button className='flex items-center gap-2 px-3 py-1 text-sm bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors disabled:opacity-50'>
-                <Sparkles className="size-4"/>
-                AI Enhance
+            <button onClick={handleEnhance} disabled={loading} className='flex items-center gap-2 px-3 py-1 text-sm bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors disabled:opacity-50'>
+              <Sparkles className="size-4"/>
+              {loading ? 'Enhancing...' : 'AI Enhance'}
             </button>
         </div>
 

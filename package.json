@@ -1,0 +1,14 @@
+{
+  "name": "resumate-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install-all": "npm --prefix server install && npm --prefix client install",
+    "server": "npm --prefix server run server",
+    "client": "npm --prefix client run dev",
+    "dev": "concurrently -k \"npm:server\" \"npm:client\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}

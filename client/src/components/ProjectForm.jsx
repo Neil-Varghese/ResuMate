@@ -1,7 +1,12 @@
-import { Plus, Trash2 } from 'lucide-react';
-import React from 'react'
+import { Plus, Trash2, Sparkles } from 'lucide-react';
+import React, { useState } from 'react'
+import { useSelector } from 'react-redux'
+import api from '../configs/api.js'
+import toast from 'react-hot-toast'
 
 const ProjectForm = ({data, onChange}) => {
+    const { token } = useSelector(state => state.auth)
+    const [loadingIndex, setLoadingIndex] = useState(null)
 
     const addProject = () => {
         const newProject = {
@@ -21,6 +26,28 @@ const ProjectForm = ({data, onChange}) => {
         const updated = [...data];
         updated[index] = { ...updated[index], [field]: value };
         onChange(updated)
+    }
+
+    const handleEnhance = async (index) => {
+        if (loadingIndex !== null) return;
+        const project = data[index];
+        const content = project?.description || '';
+        if (!content || content.trim().length === 0) {
+            toast.error('Please enter a project description to enhance')
+            return
+        }
+        setLoadingIndex(index)
+        try {
+            // reuse the job description enhancement endpoint
+            const { data: res } = await api.post('/api/ai/enhance-job-desc', { userContent: content }, { headers: { Authorization: token } })
+            if (res && res.enhancedContent) {
+                updateProject(index, 'description', res.enhancedContent)
+                toast.success('Project description enhanced')
+            }
+        } catch (err) {
+            toast.error(err?.response?.data?.message || err.message)
+        }
+        setLoadingIndex(null)
     }
 
   return (
@@ -56,8 +83,17 @@ const ProjectForm = ({data, onChange}) => {
                                 <input value={project.type || ""} onChange={ (e) => updateProject(index, "type", e.target.value) }
                                     type="text" placeholder="Project Type" className="px-3 py-2 text-sm rounded-lg"/>
 
-                                <textarea rows={4} value={project.description || ""} onChange={ (e) => updateProject(index, "description", e.target.value) }
-                                    placeholder="Describe your project..." className="w-full px-3 py-2 text-sm rounded-lg resize-none"/>
+                                <div className='space-y-2'>
+                                    <div className='flex items-center justify-between'>
+                                        <label className='text-sm font-medium text-gray-700'>Project Description</label>
+                                        <button onClick={() => handleEnhance(index)} disabled={loadingIndex === index} className='flex items-center gap-1 px-2 py-1 text-xs bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition-colors disabled:opacity-50'>
+                                            <Sparkles className='w-3 h-3'/>
+                                            {loadingIndex === index ? 'Enhancing...' : 'AI Enhance'}
+                                        </button>
+                                    </div>
+                                    <textarea rows={4} value={project.description || ""} onChange={ (e) => updateProject(index, "description", e.target.value) }
+                                        placeholder="Describe your project..." className="w-full px-3 py-2 text-sm rounded-lg resize-none"/>
+                                </div>
 
                             </div>
                                 
