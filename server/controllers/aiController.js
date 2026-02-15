@@ -26,8 +26,9 @@ export const enhanceProfessionalSummary = async (req, res) => {
         return res.status(200).json({ enhancedContent });
 
     } catch (error) {
-        console.error('Enhance professional summary error:', error.message);
-        return res.status(500).json({ message: 'Failed to enhance professional summary' });
+        console.error('Enhance professional summary error:', error);
+        console.error('Error details:', error.response?.data || error.message);
+        return res.status(500).json({ message: 'Failed to enhance professional summary', error: error.message });
     }
 }
 
@@ -58,8 +59,9 @@ export const enhanceJobDescription = async (req, res) => {
         return res.status(200).json({ enhancedContent });
 
     } catch (error) {
-        console.error('Enhance job description error:', error.message);
-        return res.status(500).json({ message: 'Failed to enhance job description' });
+        console.error('Enhance job description error:', error);
+        console.error('Error details:', error.response?.data || error.message);
+        return res.status(500).json({ message: 'Failed to enhance job description', error: error.message });
     }
 }
 
