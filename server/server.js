@@ -9,17 +9,45 @@ import aiRouter from "./routes/aiRoutes.js";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-//Database connection
+// CORS configuration
+const corsOptions = {
+    origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+    credentials: true,
+    optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
+
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Database connection
 await connectDB();
 
-app.use(express.json())
-app.use(cors())
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'Server is running' });
+});
 
-app.get('/', (req, res)=> res.send("Server is live ... "))
+// API Routes
 app.use('/api/users', userRouter);
 app.use('/api/resumes', resumeRouter);
 app.use('/api/ai', aiRouter);
 
-app.listen(PORT, ()=>{
-    console. log( `Server is running on port ${PORT}` );
+// 404 handler
+app.use((req, res) => {
+    res.status(404).json({ message: 'Route not found' });
+});
+
+// Error handler
+app.use((err, req, res, next) => {
+    console.error('Error:', err.message);
+    res.status(err.status || 500).json({
+        message: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message
+    });
+});
+
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });

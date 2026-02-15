@@ -4,82 +4,105 @@ import fs from 'fs';
 
 
 
-//controller for creating a new resume
+// Controller for creating a new resume
 // POST: /api/resumes/create
 export const createResume = async (req, res) => {
     try {
         const userId = req.userId;
         const { title } = req.body;
 
-        //create new resume
-        const newResume = await Resume.create( {user: userId, title} );
-        //return success message
-        return res.status(201). json( {message: 'Resume created successfully', resume: newResume} );
+        if (!title || title.trim().length === 0) {
+            return res.status(422).json({ message: 'Resume title is required' });
+        }
+
+        const newResume = await Resume.create({ user: userId, title: title.trim() });
+        return res.status(201).json({
+            message: 'Resume created successfully',
+            resume: newResume
+        });
 
     } catch (error) {
-        return res.status(400).json({message: error.message});
+        console.error('Create resume error:', error.message);
+        return res.status(500).json({ message: 'Internal server error' });
     }
 }
 
 
-//controller for deleting a resume
+// Controller for deleting a resume
 // DELETE: /api/resumes/delete
 export const deleteResume = async (req, res) => {
     try {
         const userId = req.userId;
         const { resumeId } = req.params;
 
-        await Resume.findOneAndDelete( { _id: resumeId, user: userId} );
+        if (!resumeId) {
+            return res.status(422).json({ message: 'Resume ID is required' });
+        }
 
-        //return success message
-        return res.status(200). json( {message: 'Resume deleted successfully'} );
+        const result = await Resume.findOneAndDelete({ _id: resumeId, user: userId });
+
+        if (!result) {
+            return res.status(404).json({ message: 'Resume not found' });
+        }
+
+        return res.status(200).json({ message: 'Resume deleted successfully' });
     } catch (error) {
-        return res.status(400).json({message: error.message});
+        console.error('Delete resume error:', error.message);
+        return res.status(500).json({ message: 'Internal server error' });
     }
 }
 
 
-//get user resume by id
+// Get user resume by id
 // GET: /api/resumes/get
-
 export const getResumeById = async (req, res) => {
     try {
         const userId = req.userId;
         const { resumeId } = req.params;
 
-        const resume = await Resume.findOne( { user: userId, _id: resumeId } );
-        if(!resume){
-            return res.status(404). json( {message: 'Resume not found'} );
+        if (!resumeId) {
+            return res.status(422).json({ message: 'Resume ID is required' });
         }
 
-        // hide some internal fields
+        const resume = await Resume.findOne({ user: userId, _id: resumeId });
+        if (!resume) {
+            return res.status(404).json({ message: 'Resume not found' });
+        }
+
         const result = resume.toObject();
         delete result.__v;
         delete result.createdAt;
         delete result.updatedAt;
 
-        return res.status(200). json( {resume: result} );
+        return res.status(200).json({ resume: result });
     } catch (error) {
-        return res.status(400).json({message: error.message});
+        console.error('Get resume error:', error.message);
+        return res.status(500).json({ message: 'Internal server error' });
     }
 }
 
 
 
-//get resume by id public
+// Get public resume by id
 // GET: /api/resumes/public
 export const getPublicResumeById = async (req, res) => {
     try {
-        const {resumeId} = req.params;
-        const resume = await Resume.findOne( {public: true, _id:resumeId} );
+        const { resumeId } = req.params;
 
-        if(!resume){
-            return res.status(404). json( {message: 'Resume not found'} );
+        if (!resumeId) {
+            return res.status(422).json({ message: 'Resume ID is required' });
         }
 
-        return res.status(200). json( {resume} );
+        const resume = await Resume.findOne({ public: true, _id: resumeId });
+
+        if (!resume) {
+            return res.status(404).json({ message: 'Resume not found' });
+        }
+
+        return res.status(200).json({ resume });
     } catch (error) {
-        return res.status(400).json({message: error.message});
+        console.error('Get public resume error:', error.message);
+        return res.status(500).json({ message: 'Internal server error' });
     }
 }
 
@@ -153,9 +176,6 @@ export const updateResume = async (req, res) => {
                 throw err;
             }
 
-            // Log the raw response for debugging
-            console.log('ImageKit upload response:', JSON.stringify(response));
-
             // response may provide url or file path in different fields depending on SDK
             const respUrl = response?.url || response?.response?.url || '';
             const respFilePath = response?.filePath || response?.file_path || response?.file_path_name || response?.name || '';
@@ -168,9 +188,8 @@ export const updateResume = async (req, res) => {
                 // If an IMAGEKIT_URL_ENDPOINT is configured, construct the delivery URL
                 const endpoint = process.env.IMAGEKIT_URL_ENDPOINT || '';
                 if (!endpoint) {
-                    // If no endpoint and no respUrl, we cannot build a usable delivery URL
-                    console.error('ImageKit upload did not return a full URL and IMAGEKIT_URL_ENDPOINT is not set.');
-                    return res.status(500).json({ message: 'Image uploaded but server cannot construct delivery URL. Please set IMAGEKIT_URL_ENDPOINT in server environment.' });
+                    console.error('ImageKit URL endpoint not configured');
+                    return res.status(500).json({ message: 'Image upload failed: server configuration missing' });
                 }
                 baseUrl = `${endpoint.replace(/\/$/, '')}/${respFilePath.replace(/^\//, '')}`;
             }
@@ -251,11 +270,23 @@ export const updateResume = async (req, res) => {
             }
         }
 
-        // Use $set to avoid replacing the whole document when partial data is provided
-        const resume = await Resume.findOneAndUpdate({ user: userId, _id: resumeId }, { $set: resumeDataCopy }, { new: true });
-        return res.status(200).json({ message: 'Saved successfully', resume });
+        // Verify resume exists before updating
+        const existingResumeCheck = await Resume.findOne({ user: userId, _id: resumeId });
+        if (!existingResumeCheck) {
+            return res.status(404).json({ message: 'Resume not found' });
+        }
+
+        // Update resume with provided data
+        const updatedResume = await Resume.findOneAndUpdate(
+            { user: userId, _id: resumeId },
+            { $set: resumeDataCopy },
+            { new: true }
+        );
+
+        return res.status(200).json({ message: 'Resume saved successfully', resume: updatedResume });
     }
     catch (error) {
-        return res.status(400).json({message: error.message});
+        console.error('Update resume error:', error.message);
+        return res.status(500).json({ message: 'Internal server error' });
     }
 }

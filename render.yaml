@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: resumate-server
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: "npm --prefix server install && npm --prefix client install && npm --prefix client run build"
+    startCommand: "npm --prefix server start"
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: MONGODB_URI
+        fromDatabase:
+          name: resumate-mongodb
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-4-turbo
+      - key: IMAGEKIT_PUBLIC_KEY
+        sync: false
+      - key: IMAGEKIT_PRIVATE_KEY
+        sync: false
+      - key: IMAGEKIT_URL_ENDPOINT
+        sync: false
+      - key: CORS_ORIGIN
+        value: https://resumate.onrender.com
+
+  - type: static site
+    name: resumate-client
+    buildCommand: "npm --prefix client install && npm --prefix client run build"
+    staticPublishPath: ./client/dist
+    routes:
+      - path: /*
+        destination: /index.html
+
+databases:
+  - name: resumate-mongodb
+    databaseName: resumate
+    ipWhitelist: []

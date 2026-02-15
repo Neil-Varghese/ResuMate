@@ -30,7 +30,7 @@ const App = () => {
       }
     }catch(error){
       dispatch(setLoading(false));
-      console.log("Error fetching user data:", error.message);
+      console.error('Failed to fetch user data');
     }
   }
 

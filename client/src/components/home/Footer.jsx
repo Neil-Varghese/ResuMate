@@ -3,45 +3,48 @@ import React from 'react'
 function Footer() {
   return (
     <>
-        <footer className="flex flex-col lg:flex-row justify-between overflow-hidden gap-10 md:gap-20 py-16 px-6 md:px-16 lg:px-24 xl:px-32 text-[13px] text-gray-500 bg-gradient-to-r from-white via-green-200/100 to-white mt-40">
+        <footer className="flex flex-col lg:flex-row justify-between overflow-hidden gap-2 sm:gap-4 md:gap-8 lg:gap-16 py-4 sm:py-6 md:py-8 lg:py-12 px-3 sm:px-4 md:px-6 lg:px-14 xl:px-24 text-[11px] sm:text-[12px] text-gray-500 bg-gradient-to-r from-white via-purple-200/100 to-white mt-8 sm:mt-12 md:mt-24 lg:mt-32">
 
-            <div className="flex flex-wrap items-start gap-10 md:gap-[60px] xl:gap-[140px] flex-shrink-0">
-                <a href="#">
-                    <img src="logo.svg" alt="logo" className="h-11 w-auto" />
+            <div className="hidden lg:flex flex-wrap items-start gap-4 md:gap-8 lg:gap-[50px] xl:gap-[120px] flex-shrink-0">
+                <a href="#" className="text-lg md:text-xl font-semibold text-slate-900">
+                    ResuMate<span className="text-purple-600">.</span>
                 </a>
                 <div>
-                    <p className="text-slate-800 font-semibold">Product</p>
-                    <ul className="mt-2 space-y-2">
-                        <li><a href="/" className="hover:text-red-600 transition">Home</a></li>
-                        <li><a href="/" className="hover:text-red-600 transition">Support</a></li>
-                        <li><a href="/" className="hover:text-red-600 transition">Pricing</a></li>
-                        <li><a href="/" className="hover:text-red-600 transition">Affiliate</a></li>
+                    <p className="text-slate-800 font-semibold text-sm">Product</p>
+                    <ul className="mt-1 md:mt-1.5 space-y-0.5 md:space-y-1.5">
+                        <li><a href="/" className="hover:text-purple-600 transition">Resume Builder</a></li>
+                        <li><a href="/" className="hover:text-purple-600 transition">Templates</a></li>
+                        <li><a href="/" className="hover:text-purple-600 transition">Cover Letters</a></li>
+                        <li><a href="/" className="hover:text-purple-600 transition">Pricing</a></li>
                     </ul>
                 </div>
                 <div>
-                    <p className="text-slate-800 font-semibold">Resources</p>
-                    <ul className="mt-2 space-y-2">
-                        <li><a href="/" className="hover:text-red-600 transition">Company</a></li>
-                        <li><a href="/" className="hover:text-red-600 transition">Blogs</a></li>
-                        <li><a href="/" className="hover:text-red-600 transition">Community</a></li>
-                        <li><a href="/" className="hover:text-red-600 transition">Careers</a></li>
-                        <li><a href="/" className="hover:text-red-600 transition">About</a></li>
+                    <p className="text-slate-800 font-semibold text-sm">Resources</p>
+                    <ul className="mt-1 md:mt-1.5 space-y-0.5 md:space-y-1.5">
+                        <li><a href="/" className="hover:text-purple-600 transition">Resume Tips</a></li>
+                        <li><a href="/" className="hover:text-purple-600 transition">Interview Prep</a></li>
+                        <li><a href="/" className="hover:text-purple-600 transition">Career Guides</a></li>
+                        <li><a href="/" className="hover:text-purple-600 transition">Blog</a></li>
+                        <li><a href="/" className="hover:text-purple-600 transition">Help Center</a></li>
                     </ul>
                 </div>
                 <div>
-                    <p className="text-slate-800 font-semibold">Legal</p>
-                    <ul className="mt-2 space-y-2">
-                        <li><a href="/" className="hover:text-red-600 transition">Privacy</a></li>
-                        <li><a href="/" className="hover:text-red-600 transition">Terms</a></li>
+                    <p className="text-slate-800 font-semibold text-sm">Legal</p>
+                    <ul className="mt-1 md:mt-1.5 space-y-0.5 md:space-y-1.5">
+                        <li><a href="/" className="hover:text-purple-600 transition">Privacy Policy</a></li>
+                        <li><a href="/" className="hover:text-purple-600 transition">Terms of Service</a></li>
                     </ul>
                 </div>
             </div>
 
-            <div className="flex flex-col max-md:items-center max-md:text-center gap-2 items-end">
-                <p className="max-w-60">Making every customer feel valued—no matter the size of your audience.</p>
-                <div className="flex items-center gap-4 mt-3">
+            <div className="flex flex-col w-full lg:w-auto items-center lg:items-end text-center lg:text-right gap-1.5 sm:gap-2">
+                <a href="#" className="lg:hidden text-base sm:text-lg font-semibold text-slate-900 mb-1">
+                    ResuMate<span className="text-purple-600">.</span>
+                </a>
+                <p className="text-xs sm:text-sm max-w-xs sm:max-w-sm lg:max-w-60">Build professional resumes faster with AI-guided content and clean, ATS-friendly templates.</p>
+                <div className="flex items-center gap-2 sm:gap-3 mt-1 sm:mt-2">
                     <a href="https://dribbble.com" target="_blank" rel="noreferrer">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-dribbble size-5 hover:text-red-500" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-dribbble size-4 sm:size-5 hover:text-purple-500" aria-hidden="true">
                             <circle cx="12" cy="12" r="10"></circle>
                             <path d="M19.13 5.09C15.22 9.14 10 10.44 2.25 10.94"></path>
                             <path d="M21.75 12.84c-6.62-1.41-12.14 1-16.38 6.32"></path>
@@ -49,28 +52,28 @@ function Footer() {
                         </svg>
                     </a>
                     <a href="https://www.linkedin.com" target="_blank" rel="noreferrer">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-linkedin size-5 hover:text-red-500" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-linkedin size-4 sm:size-5 hover:text-purple-500" aria-hidden="true">
                             <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
                             <rect width="4" height="12" x="2" y="9"></rect>
                             <circle cx="4" cy="4" r="2"></circle>
                         </svg>
                     </a>
                     <a href="https://x.com" target="_blank" rel="noreferrer">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-twitter size-5 hover:text-red-500" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-twitter size-4 sm:size-5 hover:text-purple-500" aria-hidden="true">
                             <path
                                 d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z">
                             </path>
                         </svg>
                     </a>
                     <a href="https://www.youtube.com" target="_blank" rel="noreferrer">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-youtube size-6 hover:text-red-500" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-youtube size-4 sm:size-5 hover:text-purple-500" aria-hidden="true">
                             <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17">
                             </path>
                             <path d="m10 15 5-3-5-3z"></path>
                         </svg>
                     </a>
                 </div>
-                <p className="mt-3 text-center">© 2025 ResuMate</p>
+                <p className="mt-1 sm:mt-2 text-center text-xs">© 2026 ResuMate</p>
             </div>
         </footer>
 

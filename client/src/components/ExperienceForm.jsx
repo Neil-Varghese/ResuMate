@@ -59,7 +59,7 @@ const ExperienceForm = ({ data = [], onChange }) => {
                     <h3 className='flex items-center gap-2 text-lg font-semibold text-gray-900'> Professional Experience </h3>
                     <p className='text-sm text-gray-500'>Add your job experience</p>
                 </div>
-                <button onClick={addExperience} className='flex items-center gap-2 px-3 py-1 text-sm bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors'>
+                <button onClick={addExperience} className='flex items-center gap-2 px-3 py-1 text-sm bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors'>
                     <Plus className="size-4"/>
                     Add Experience
                 </button>
@@ -101,7 +101,7 @@ const ExperienceForm = ({ data = [], onChange }) => {
 
                             <label className='flex items-center gap-2'>
                                 <input type="checkbox" checked={experience.is_current || false} onChange={(e) => updateExperience(index, "is_current", e.target.checked)}
-                                    className='rounded border-gray-300 text-blue-600 focus:ring-blue-500' />
+                                    className='rounded border-gray-300 text-purple-600 focus:ring-purple-500' />
                                 <span className='text-sm text-gray-700'>Currently working here</span>
                             </label>
 
