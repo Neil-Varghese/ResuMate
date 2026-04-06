@@ -19,8 +19,10 @@ services:
         generateValue: true
       - key: OPENAI_API_KEY
         sync: false
+      - key: OPENAI_BASE_URL
+        value: https://generativelanguage.googleapis.com/v1beta/openai
       - key: OPENAI_MODEL
-        value: gpt-4-turbo
+        value: gemini-2.5-flash
       - key: IMAGEKIT_PUBLIC_KEY
         sync: false
       - key: IMAGEKIT_PRIVATE_KEY

@@ -1,6 +1,23 @@
 import Resume from '../models/Resume.js';
 import ai from '../configs/ai.js';
 
+const AI_MODEL = process.env.OPENAI_MODEL || 'gemini-2.5-flash';
+
+const getAiErrorResponse = (error, fallbackMessage) => {
+    const statusCode = error?.status || error?.response?.status || 500;
+    const providerMessage = error?.error?.message || error?.response?.data?.error?.message || error?.message;
+    const message = providerMessage || fallbackMessage;
+    const safeStatus = statusCode >= 400 && statusCode < 600 ? statusCode : 500;
+
+    return {
+        status: safeStatus,
+        body: {
+            message: fallbackMessage,
+            details: message
+        }
+    };
+};
+
 // Controller for enhancing a resume's professional summary
 // POST: /api/ai/enhance-pro-sum
 export const enhanceProfessionalSummary = async (req, res) => {
@@ -12,7 +29,7 @@ export const enhanceProfessionalSummary = async (req, res) => {
         }
 
         const response = await ai.chat.completions.create({
-            model: process.env.OPENAI_MODEL,
+            model: AI_MODEL,
             messages: [
                 {
                     role: "system",
@@ -27,8 +44,8 @@ export const enhanceProfessionalSummary = async (req, res) => {
 
     } catch (error) {
         console.error('Enhance professional summary error:', error);
-        console.error('Error details:', error.response?.data || error.message);
-        return res.status(500).json({ message: 'Failed to enhance professional summary', error: error.message });
+        const aiError = getAiErrorResponse(error, 'Failed to enhance professional summary');
+        return res.status(aiError.status).json(aiError.body);
     }
 }
 
@@ -45,7 +62,7 @@ export const enhanceJobDescription = async (req, res) => {
         }
 
         const response = await ai.chat.completions.create({
-            model: process.env.OPENAI_MODEL,
+            model: AI_MODEL,
             messages: [
                 {
                     role: "system",
@@ -60,8 +77,8 @@ export const enhanceJobDescription = async (req, res) => {
 
     } catch (error) {
         console.error('Enhance job description error:', error);
-        console.error('Error details:', error.response?.data || error.message);
-        return res.status(500).json({ message: 'Failed to enhance job description', error: error.message });
+        const aiError = getAiErrorResponse(error, 'Failed to enhance job description');
+        return res.status(aiError.status).json(aiError.body);
     }
 }
 
@@ -107,7 +124,7 @@ Return JSON with this structure:
 }`;
 
         const response = await ai.chat.completions.create({
-            model: process.env.OPENAI_MODEL,
+            model: AI_MODEL,
             messages: [
                 { role: "system", content: systemPrompt },
                 { role: "user", content: userPrompt }
@@ -130,7 +147,8 @@ Return JSON with this structure:
         });
 
     } catch (error) {
-        console.error('Upload resume error:', error.message);
-        return res.status(500).json({ message: 'Failed to process resume upload' });
+        console.error('Upload resume error:', error);
+        const aiError = getAiErrorResponse(error, 'Failed to process resume upload');
+        return res.status(aiError.status).json(aiError.body);
     }
 }    
