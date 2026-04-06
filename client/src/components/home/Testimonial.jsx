@@ -53,7 +53,7 @@ const cardsData = [
 
   return (
     <>
-    <div id = 'testimonials' className='flex flex-col items-center my-4 sm:my-8 scroll-mt-10 px-4'>
+    <div id = 'testimonials' className='flex flex-col items-center mt-20 mb-6 sm:mt-28 sm:mb-10 scroll-mt-10 px-4'>
         <div className="flex items-center gap-2 text-xs text-purple-600 bg-purple-400/10 border border-purple-200 rounded-full px-5 py-1">
             <BookUserIcon className="size-4.5 stroke-purple-600"/>
             <span>Success Stories</span>

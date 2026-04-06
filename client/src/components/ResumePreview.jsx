@@ -22,7 +22,9 @@ const ResumePreview = ({data, template, accentColor, classes = ""}) => {
     return (
         <div className='w-full bg-gray-100'>
             <div id="resume-preview" className={"border border-gray-200 print:shadow-none print:border-none" + classes}>
-            {renderTemplate()}
+                <div className='resume-page-content'>
+                    {renderTemplate()}
+                </div>
             </div>
 
             <style jsx>
@@ -30,6 +32,23 @@ const ResumePreview = ({data, template, accentColor, classes = ""}) => {
                     @page {
                         size: letter;
                         margin: 0;
+                    }
+                    @media (max-width: 640px) {
+                        #resume-preview {
+                            width: min(100%, 420px);
+                            margin: 0 auto;
+                            aspect-ratio: 210 / 297;
+                            overflow-y: auto;
+                            background: #ffffff;
+                        }
+
+                        #resume-preview .resume-page-content {
+                            min-height: 100%;
+                        }
+
+                        #resume-preview .resume-page-content * {
+                            font-size: 80% !important;
+                        }
                     }
                     @media print {
                         html, body {
