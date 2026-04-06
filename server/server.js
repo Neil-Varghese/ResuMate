@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import "dotenv/config";
+import mongoose from "mongoose";
 import connectDB from "./configs/db.js";
 import userRouter from "./routes/userRoutes.js";
 import resumeRouter from "./routes/resumeRoutes.js";
@@ -34,12 +35,27 @@ app.get('/', (req, res) => {
     });
 });
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-    res.status(200).json({
-        status: 'ok',
-        message: 'Server is running'
-    });
+// Health check endpoint that also pings MongoDB
+app.get('/health', async (req, res) => {
+    try {
+        if (mongoose.connection.readyState !== 1 || !mongoose.connection.db) {
+            await connectDB();
+        }
+
+        await mongoose.connection.db.admin().ping();
+
+        res.status(200).json({
+            status: 'ok',
+            message: 'Server and database are running'
+        });
+    }
+    catch (error) {
+        res.status(503).json({
+            status: 'error',
+            message: 'Database ping failed',
+            error: process.env.NODE_ENV === 'production' ? undefined : error.message
+        });
+    }
 });
 
 // API Routes
