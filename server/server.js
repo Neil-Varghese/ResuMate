@@ -25,9 +25,21 @@ app.use(express.urlencoded({ extended: true }));
 // Database connection
 await connectDB();
 
+// Root endpoint for deployment checks
+app.get('/', (req, res) => {
+    res.status(200).json({
+        status: 'ok',
+        message: 'ResuMate server is running',
+        healthCheck: '/health'
+    });
+});
+
 // Health check endpoint
 app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'Server is running' });
+    res.status(200).json({
+        status: 'ok',
+        message: 'Server is running'
+    });
 });
 
 // API Routes
