@@ -24,7 +24,7 @@ const Hero = () => {
 
     return (
         <>
-            <div className="min-h-screen pb-16">
+            <div className="min-h-[88vh] md:min-h-screen pb-8 md:pb-16">
                 {/* Navbar */}
                 <nav className="z-50 flex items-center justify-between w-full py-4 px-6 md:px-16 lg:px-24 xl:px-40 text-sm">
                     <Link to="/" className="text-xl font-semibold text-slate-900">
