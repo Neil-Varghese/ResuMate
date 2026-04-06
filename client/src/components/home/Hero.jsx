@@ -1,4 +1,4 @@
-import React, { use } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
@@ -7,6 +7,21 @@ const Hero = () => {
     const {user} = useSelector(state => state.auth);
 
     const [menuOpen, setMenuOpen] = React.useState(false);
+
+    const scrollToSection = (sectionId) => {
+        if (!sectionId) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setMenuOpen(false);
+            return;
+        }
+
+        const section = document.getElementById(sectionId);
+        if (section) {
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        setMenuOpen(false);
+    };
+
     return (
         <>
             <div className="min-h-screen pb-16">
@@ -17,10 +32,10 @@ const Hero = () => {
                     </Link>
 
                     <div className="hidden md:flex items-center gap-8 transition duration-500 text-slate-800">
-                        <a href="#" className="hover:text-purple-600 transition">Home</a>
-                        <a href="#features" className="hover:text-purple-600 transition">Features</a>
-                        <a href="#testimonials" className="hover:text-purple-600 transition">Testimonials</a>
-                        <a href="#cta" className="hover:text-purple-600 transition">Contact</a>
+                        <button type="button" onClick={() => scrollToSection('')} className="hover:text-purple-600 transition">Home</button>
+                        <button type="button" onClick={() => scrollToSection('features')} className="hover:text-purple-600 transition">Features</button>
+                        <button type="button" onClick={() => scrollToSection('testimonials')} className="hover:text-purple-600 transition">Testimonials</button>
+                        <button type="button" onClick={() => scrollToSection('cta')} className="hover:text-purple-600 transition">Contact</button>
                     </div>
 
                     <div className="flex gap-2">
@@ -44,9 +59,10 @@ const Hero = () => {
 
                 {/* Mobile Menu */}
                 <div className={`fixed inset-0 z-[100] bg-black/40 text-black backdrop-blur flex flex-col items-center justify-center text-lg gap-8 md:hidden transition-transform duration-300 ${menuOpen ? "translate-x-0" : "-translate-x-full"}`} >
-                    <a href="#" className="text-white">Home</a>
-                    <a href="#features" className="text-white">Features</a>
-                    <a href="#testimonials" className="text-white">Testimonials</a>
+                    <button type="button" onClick={() => scrollToSection('')} className="text-white">Home</button>
+                    <button type="button" onClick={() => scrollToSection('features')} className="text-white">Features</button>
+                    <button type="button" onClick={() => scrollToSection('testimonials')} className="text-white">Testimonials</button>
+                    <button type="button" onClick={() => scrollToSection('cta')} className="text-white">Contact</button>
                     <button onClick={() => setMenuOpen(false)} className="active:ring-3 active:ring-white aspect-square size-10 p-1 items-center justify-center bg-purple-600 hover:bg-purple-700 transition text-white rounded-md flex" >
                         X
                     </button>
